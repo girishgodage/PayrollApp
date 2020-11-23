@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "agentg-cmchef": {
+      "hosting": {
+        "Angular": [
+          "agentg-cmchef"
+        ]
+      }
+    }
+  }
+}
