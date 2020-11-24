@@ -10,7 +10,9 @@ import 'rxjs/add/observable/of';
 
 export class BackendService {
 
-  private _graphQLURL = "http://localhost:3000/alivetracking";
+  //private _graphQLURL = "http://localhost:3000/api/alivetracking";
+  //For production uncomment below
+  private _graphQLURL = "api/alivetracking";
 
   constructor(private _http: HttpClient) { }
 

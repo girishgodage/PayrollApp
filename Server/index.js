@@ -2,6 +2,7 @@ const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const cors = require('cors');
 const app = express();
+var path = require('path');
 // store config variables in dotenv
 require('dotenv').config();
 schema = require('./schema/mongoDBSchema'); // uncomment this for MONGODB
@@ -20,31 +21,40 @@ mongoose.connection.once('open', () => {
 // ****** Set up default mongoose connection END ****** //
 
 // ****** allow cross-origin requests code START ****** //
-//app.use(cors()); // uncomment this to enable all CORS and delete cors(corsOptions) in below code
-var allowedOrigins = process.env.allowedOrigins.split(',');
-app.use(cors({
-    origin: function (origin, callback) {
-        // allow requests with no origin 
-        // (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+app.use(cors()); // uncomment this to enable all CORS and delete cors(corsOptions) in below code
+// var allowedOrigins = process.env.allowedOrigins.split(',');
+// app.use(cors({
+//     origin: function (origin, callback) {
+//         // allow requests with no origin 
+//         // (like mobile apps or curl requests)
+//         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.indexOf(origin) === -1) {
-            var msg = 'The CORS policy for this site does not ' + 'allow access from the specified Origin.';
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    }
-}));
+//         if (allowedOrigins.indexOf(origin) === -1) {
+//             var msg = 'The CORS policy for this site does not ' + 'allow access from the specified Origin.';
+//             return callback(new Error(msg), false);
+//         }
+//         return callback(null, true);
+//     }
+// }));
 // ****** allow cross-origin requests code END ****** //
 
 // bind express with graphql
-app.use('/graphql', graphqlHTTP({
+app.use('/api/graphql', graphqlHTTP({
     schema,
     graphiql: false
 }));
-app.use('/alivetracking', graphqlHTTP({
+app.use('/api/alivetracking', graphqlHTTP({
     schema,
     graphiql: false
 }));
+
+// for Production
+app.use(express.static(path.join(__dirname,'public')));
+	
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'public/index.html'));
+})
+
+
 app.use('/', (req, res) => res.send("Welcome Payroll User"));
 app.listen(process.env.PORT, () => console.log('Payroll Server is ready on localhost:' + process.env.PORT));
